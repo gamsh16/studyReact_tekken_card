@@ -7,8 +7,8 @@ import Preview from "../preview/preview";
 import Editor from "../editor/editor";
 
 const Maker = ({ authService }) => {
-  const [cards, setCards] = useState([
-    {
+  const [cards, setCards] = useState({
+    1: {
       id: "1",
       name: "카즈야 미시마",
       fightStyle: "미시마류 가라데",
@@ -18,7 +18,7 @@ const Maker = ({ authService }) => {
       fileName: "kazuya",
       fileURL: null,
     },
-    {
+    2: {
       id: "2",
       name: "화랑",
       fightStyle: "태권도",
@@ -28,7 +28,7 @@ const Maker = ({ authService }) => {
       fileName: "hwarang",
       fileURL: "hwarang.png",
     },
-    {
+    3: {
       id: "3",
       name: "킹",
       fightStyle: "레슬링",
@@ -38,7 +38,8 @@ const Maker = ({ authService }) => {
       fileName: "king",
       fileURL: "king.png",
     },
-  ]);
+  });
+
   const history = useHistory();
   const onLogout = () => {
     authService.logout();
@@ -53,16 +54,32 @@ const Maker = ({ authService }) => {
     });
   });
 
-  const addCard = (card) => {
-    const cardList = [...cards, card];
-    setCards(cardList);
+  const upsertCard = (card) => {
+    setCards((cards) => {
+      const updated = { ...cards };
+      updated[card.id] = card;
+      return updated;
+    });
+  };
+
+  const deleteCard = (card) => {
+    setCards((cards) => {
+      const updated = { ...cards };
+      delete updated[card.id];
+      return updated;
+    });
   };
 
   return (
     <section className={styles.maker}>
       <Header onLogout={onLogout} />
       <div className={styles.container}>
-        <Editor cards={cards} addCard={addCard} />
+        <Editor
+          cards={cards}
+          addCard={upsertCard}
+          updateCard={upsertCard}
+          deleteCard={deleteCard}
+        />
         <Preview cards={cards} />
       </div>
       <Footer />

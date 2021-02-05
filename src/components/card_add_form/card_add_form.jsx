@@ -1,15 +1,23 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Button from "../button/button";
-import ImageFileInput from "../image_file_input/image_file_input";
 import styles from "./card_add_form.module.css";
 
-const CardAddForm = ({ onAdd }) => {
+const CardAddForm = ({ FileInput, onAdd }) => {
   const formRef = useRef();
   const nameRef = useRef();
   const fightStyleRef = useRef();
   const themeRef = useRef();
   const countryRef = useRef();
   const skillRef = useRef();
+
+  const [file, setFile] = useState({ fileName: null, fileURL: null });
+
+  const onFileChange = (file) => {
+    setFile({
+      fileName: file.name,
+      fileURL: file.url,
+    });
+  };
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -20,8 +28,11 @@ const CardAddForm = ({ onAdd }) => {
       theme: themeRef.current.value,
       country: countryRef.current.value || "",
       skill: skillRef.current.value || "",
+      fileName: file.fileName || "",
+      fileURL: file.url || "",
     };
     formRef.current.reset();
+    setFile({ fileName: null, fileURL: null });
     onAdd(card);
   };
 
@@ -60,7 +71,7 @@ const CardAddForm = ({ onAdd }) => {
         placeholder="Skills"
       ></textarea>
       <div className={styles.fileInput}>
-        <ImageFileInput />
+        <FileInput name={file.fileName} onFileChange={onFileChange} />
       </div>
       <Button name="Add" onClick={onSubmit} />
     </form>
